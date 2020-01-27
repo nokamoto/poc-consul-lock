@@ -4,11 +4,11 @@ RUN apk update && apk add git
 
 WORKDIR /src
 
-COPY go.* .
+COPY go.* ./
 
 RUN go mod download
 
-COPY *.go .
+COPY *.go ./
 
 RUN go install .
 
