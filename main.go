@@ -49,7 +49,7 @@ func main() {
 		log.Printf("got=%v meta=%v", *got, *meta2)
 	}
 
-	log.Println("release")
+	log.Println("release (cas)")
 	pair.ModifyIndex = meta2.LastIndex
 	success, meta, err = kv.DeleteCAS(pair, nil)
 	if err != nil {
@@ -59,7 +59,25 @@ func main() {
 		log.Println("should be success")
 	}
 
-	log.Println("re-acquire (failed)")
+	log.Println("re-acquire")
+	pair.ModifyIndex = 0
+	success, meta, err = kv.CAS(pair, nil)
+	if err != nil {
+		log.Fatal(err)
+	} else {
+		log.Printf("success=%v meta=%v", success, *meta)
+		log.Println("should be success")
+	}
+
+	log.Println("release")
+	meta, err = kv.Delete(key, nil)
+	if err != nil {
+		log.Fatal(err)
+	} else {
+		log.Printf("meta=%v", *meta)
+	}
+
+	log.Println("re-acquire")
 	pair.ModifyIndex = 0
 	success, meta, err = kv.CAS(pair, nil)
 	if err != nil {
